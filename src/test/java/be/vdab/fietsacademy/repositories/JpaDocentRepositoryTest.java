@@ -1,5 +1,6 @@
 package be.vdab.fietsacademy.repositories;
 
+import be.vdab.fietsacademy.domain.Geslacht;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     private long idVanTestMan(){
         return super.jdbcTemplate.queryForObject("select id from docenten where voornaam = 'testM'", Long.class);
     }
+    private long idVanTestVrouw(){
+        return super.jdbcTemplate.queryForObject("select id from docenten where voornaam = 'testV'", Long.class);
+    }
 
     @Test
     public void findById(){
@@ -33,5 +37,15 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     @Test
     public void findByOnbestaandeId(){
         assertThat(repository.findById(-1)).isNotPresent();
+    }
+
+    @Test
+    public void testMan(){
+        assertThat(repository.findById(idVanTestMan()).get().getGeslacht()).isEqualTo(Geslacht.MAN);
+    }
+
+    @Test
+    public void testVrouw(){
+        assertThat(repository.findById(idVanTestVrouw()).get().getGeslacht()).isEqualTo(Geslacht.VROUW);
     }
 }
