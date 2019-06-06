@@ -17,10 +17,10 @@ import java.sql.SQLException;
 public class DataSourceTest {
 @Autowired
     private DataSource dataSource;
-@Test
+    @Test
     public void getConnection() throws SQLException {
-    try(Connection connection = dataSource.getConnection()){
+        try(Connection connection = dataSource.getConnection()){
 
+        }
     }
-}
 }
