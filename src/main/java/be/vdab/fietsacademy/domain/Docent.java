@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class Docent implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String voornaam;
     private String familienaam;
@@ -17,7 +18,15 @@ public class Docent implements Serializable {
     @Enumerated(EnumType.STRING)
     private Geslacht geslacht;
 
-    public Docent() {
+    protected Docent() {
+    }
+
+    public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht) {
+        this.voornaam = voornaam;
+        this.familienaam = familienaam;
+        this.wedde = wedde;
+        this.emailAdres = emailAdres;
+        this.geslacht = geslacht;
     }
 
     public long getId() {
