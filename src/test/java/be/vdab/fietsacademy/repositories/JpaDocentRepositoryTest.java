@@ -12,9 +12,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,5 +77,43 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
         repository.delete(id);
         manager.flush();
         assertThat(super.countRowsInTableWhere(DOCENTEN, "id=" + id)).isZero();
+    }
+
+    @Test
+    public void findAll(){
+        assertThat(repository.findAll()).hasSize(super.countRowsInTable(DOCENTEN)).extracting(Docent::getWedde).isSorted();
+    }
+
+    @Test
+    public void findByWeddeBetween(){
+        BigDecimal duizend = BigDecimal.valueOf(1000);
+        BigDecimal tweeduizend = BigDecimal.valueOf(2000);
+        List<Docent> docenten = repository.findByWeddeBetween(duizend, tweeduizend);
+        assertThat(docenten).hasSize(super.countRowsInTableWhere(DOCENTEN, "wedde between 1000 and 2000"))
+                .allSatisfy(docent -> assertThat(docent.getWedde()).isBetween(duizend, tweeduizend));
+    }
+
+    @Test
+    public void findEmailAdressen(){
+        assertThat(repository.findEmailAdressen()).hasSize(super.jdbcTemplate.queryForObject("select count(distinct emailadres) from docenten", Integer.class))
+                .allSatisfy(adres -> assertThat(adres).contains("@"));
+    }
+
+    @Test
+    public void findIdsEnEmailAdressen(){
+        assertThat(repository.findIdsEnAmailAdressen()).hasSize(super.countRowsInTable(DOCENTEN));
+    }
+
+    @Test
+    public void findGrootsteWedde(){
+        assertThat(repository.findGrootsteWedde()).isEqualByComparingTo(super.jdbcTemplate.queryForObject("select max(wedde) from docenten", BigDecimal.class));
+    }
+
+    @Test
+    public void findAantalDocentenPerWedde(){
+        BigDecimal duizend = BigDecimal.valueOf(1000);
+        assertThat(repository.findAantalDocentenPerWedde()).hasSize(super.jdbcTemplate.queryForObject("select count(distinct wedde) from docenten", Integer.class))
+                .filteredOn(aantalPerWedde -> aantalPerWedde.getWedde().compareTo(duizend) == 0)
+                .allSatisfy(aantalPerWedde -> assertThat(aantalPerWedde.getAantal()).isEqualTo(super.countRowsInTableWhere(DOCENTEN, "wedde = 1000")));
     }
 }
