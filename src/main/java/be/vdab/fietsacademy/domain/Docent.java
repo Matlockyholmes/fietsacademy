@@ -26,21 +26,21 @@ public class Docent implements Serializable {
     @CollectionTable(name = "docentenbijnamen", joinColumns = @JoinColumn(name = "docentid"))
     @Column(name = "bijnaam")
     private Set<String> bijnamen;
-    @ManyToOne(optional = false)
+   /* @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "campusid")
-    private Campus campus;
+    private Campus campus;*/
 
     protected Docent() {
     }
 
-    public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht, Campus campus) {
+    public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht/*, Campus campus*/) {
         this.voornaam = voornaam;
         this.familienaam = familienaam;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.geslacht = geslacht;
         this.bijnamen = new LinkedHashSet<>();
-        setCampus(campus);
+        /*setCampus(campus);*/
     }
 
     public long getId() {
@@ -67,14 +67,6 @@ public class Docent implements Serializable {
         return geslacht;
     }
 
-    public Campus getCampus() {
-        return campus;
-    }
-
-    public void setCampus(Campus campus) {
-        this.campus = campus;
-    }
-
     public void opslag(BigDecimal percentage){
         if(percentage.compareTo(BigDecimal.ZERO) <= 0){
             throw new IllegalArgumentException();
@@ -97,4 +89,32 @@ public class Docent implements Serializable {
     public boolean removeBijnaam(String bijnaam){
         return bijnamen.remove(bijnaam);
     }
+
+   /* public Campus getCampus() {
+        return campus;
+    }
+
+    public void setCampus(Campus campus) {
+        if (campus != null){
+            this.campus = campus;
+        } else {
+            throw new NullPointerException();
+        }
+    }*/
+
+   @Override
+    public boolean equals(Object object){
+       if(!(object instanceof Docent)){
+           return false;
+       }
+       if (emailAdres == null){
+           return false;
+       }
+       return emailAdres.equalsIgnoreCase(((Docent) object).emailAdres);
+   }
+
+   @Override
+    public int hashCode(){
+       return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
+   }
 }

@@ -1,5 +1,7 @@
 package be.vdab.fietsacademy.services;
 
+import be.vdab.fietsacademy.domain.Adres;
+import be.vdab.fietsacademy.domain.Campus;
 import be.vdab.fietsacademy.domain.Docent;
 import be.vdab.fietsacademy.domain.Geslacht;
 import be.vdab.fietsacademy.exceptions.DocentNietGevondenException;
@@ -27,7 +29,8 @@ public class DefaultDocentServiceTest {
 
     @Before
     public void before(){
-        docent = new Docent("test", "test", BigDecimal.valueOf(100), "test@fietsacademy.be", Geslacht.MAN);
+        Campus campus = new Campus("test", new Adres("test", "test", "test", "test"));
+        docent = new Docent("test", "test", BigDecimal.valueOf(100), "test@fietsacademy.be", Geslacht.MAN/*, campus*/);
         when(repository.findById(1)).thenReturn(Optional.of(docent));
         when(repository.findById(-1)).thenReturn(Optional.empty());
         service = new DefaultDocentService(repository);
