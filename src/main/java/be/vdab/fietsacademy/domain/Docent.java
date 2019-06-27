@@ -29,6 +29,8 @@ public class Docent implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "campusid")
     private Campus campus;
+    @ManyToMany(mappedBy = "docenten")
+    private Set<Verantwoordelijkheid> verantwoordelijkheden = new LinkedHashSet<>();
 
     protected Docent() {
     }
@@ -115,5 +117,25 @@ public class Docent implements Serializable {
    @Override
     public int hashCode(){
        return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
+   }
+
+   public boolean add(Verantwoordelijkheid verantwoordelijkheid){
+        boolean toegevoegd = verantwoordelijkheden.add(verantwoordelijkheid);
+        if (! verantwoordelijkheid.getDocenten().contains(this)){
+            verantwoordelijkheid.add(this);
+        }
+        return toegevoegd;
+   }
+
+   public boolean remove(Verantwoordelijkheid verantwoordelijkheid){
+        boolean verwijderd = verantwoordelijkheden.remove(verantwoordelijkheid);
+        if (verantwoordelijkheid.getDocenten().contains(this)){
+            verantwoordelijkheid.remove(this);
+        }
+        return verwijderd;
+   }
+
+   public Set<Verantwoordelijkheid> getVerantwoordelijkheden(){
+        return Collections.unmodifiableSet(verantwoordelijkheden);
    }
 }
