@@ -11,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "docenten")
+@NamedEntityGraph(name = "Docent.MET_CAMPUS", attributeNodes = @NamedAttributeNode("campus"))
 public class Docent implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -31,6 +32,7 @@ public class Docent implements Serializable {
     private Campus campus;
     @ManyToMany(mappedBy = "docenten")
     private Set<Verantwoordelijkheid> verantwoordelijkheden = new LinkedHashSet<>();
+    public static final String MET_CAMPUS = "Docent.metCampus";
 
     protected Docent() {
     }
